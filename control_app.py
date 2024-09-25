@@ -26,7 +26,7 @@ def main():
     page_ico = os.path.join(current_dir, 'resources', 'merge.png')
     logo = os.path.join(current_dir, 'resources', 'Logo_AOPS_conseil.png')
     title = 'Outil de :orange[Contrôle] des Fichiers '
-    
+
     st.set_page_config(layout="wide", page_title='Controle des Fichiers', page_icon=page_ico)
     
     fn.init_appearance(logo, title)
@@ -291,26 +291,26 @@ def main():
                     if st.session_state.df_1 is not None:
                         st.success('T-1 importé avec succès')
             
-            #------------------------------------------------- Control coherence and display warnings------------------------------------------------------------------------------
-                if (st.session_state.type_fichier == 'santé') and (st.session_state.type == 'prestations'):
-                    st.session_state.df_eff = fn.upload_and_rename(title="Charger effectifs", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_eff_up')
-                    
-                    if 'df_eff' in st.session_state:
-                        if st.session_state.df_eff is not None:
-                            st.session_state.warnings_bad_ids = fn.eff_prest_id_verif(df_prestations_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, assureur=st.session_state.assr, rename=False, inverse=False)
-                            st.session_state.warnings_bad_ids_inverse = fn.eff_prest_id_verif(df_prestations_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, assureur=st.session_state.assr, rename=False, inverse=True)
+                #------------------------------------------------- Control coherence and display warnings------------------------------------------------------------------------------
+                    if (st.session_state.type_fichier == 'santé') and (st.session_state.type == 'prestations'):
+                        st.session_state.df_eff = fn.upload_and_rename(title="Charger effectifs", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_eff_up')
+                        
+                        if 'df_eff' in st.session_state:
+                            if st.session_state.df_eff is not None:
+                                st.session_state.warnings_bad_ids = fn.eff_prest_id_verif(df_prestations_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, assureur=st.session_state.assr, rename=False, inverse=False)
+                                st.session_state.warnings_bad_ids_inverse = fn.eff_prest_id_verif(df_prestations_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, assureur=st.session_state.assr, rename=False, inverse=True)
 
-                elif (st.session_state.type_fichier == 'santé') and (st.session_state.type == 'effectifs'):
-                    st.session_state.df_prest = fn.upload_and_rename(title="Charger prestations", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_prest_up')
-            
-            #------------------------------------------------- Control BAD and display warnings------------------------------------------------------------------------------  
-                st.session_state.warnings_bad = fn.controle_bad(df=st.session_state.final_df, df_1=st.session_state.df_1)
-                if  st.session_state.warnings_bad is not None:
-                    fn.display_warnings(st.session_state.warnings_bad, title="Contrôles BAD", header="Résultat")        
-                    if  'warnings_bad_ids' in  st.session_state :
-                        fn.display_warnings(st.session_state.warnings_bad_ids, title="Prestations vs Effectifs", header="Prestations manquantes dans Effectifs ")
-                    if  'warnings_bad_ids_inverse' in  st.session_state :
-                        fn.display_warnings(st.session_state.warnings_bad_ids_inverse, title="Effectifs vs Prestations", header="Effectifs manquants dans Prestations" )
+                    elif (st.session_state.type_fichier == 'santé') and (st.session_state.type == 'effectifs'):
+                        st.session_state.df_prest = fn.upload_and_rename(title="Charger prestations", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_prest_up')
+                
+                #------------------------------------------------- Control BAD and display warnings------------------------------------------------------------------------------  
+                    st.session_state.warnings_bad = fn.controle_bad(df=st.session_state.final_df, df_1=st.session_state.df_1)
+                    if  st.session_state.warnings_bad is not None:
+                        fn.display_warnings(st.session_state.warnings_bad, title="Contrôles BAD", header="Résultat")        
+                        if  'warnings_bad_ids' in  st.session_state :
+                            fn.display_warnings(st.session_state.warnings_bad_ids, title="Prestations vs Effectifs", header="Prestations manquantes dans Effectifs ")
+                        if  'warnings_bad_ids_inverse' in  st.session_state :
+                            fn.display_warnings(st.session_state.warnings_bad_ids_inverse, title="Effectifs vs Prestations", header="Effectifs manquants dans Prestations" )
 
 if __name__ == "__main__":
     main()
