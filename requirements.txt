@@ -1,0 +1,5 @@
+streamlit==1.36.0
+python-calamine==0.2.2
+pandas==2.2.0
+seaborn==0.13.2
+numpy==1.26.4
