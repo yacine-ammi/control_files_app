@@ -28,7 +28,7 @@ def main():
     
     st.set_page_config(layout="wide", page_title='Controle des Fichiers', page_icon=page_ico)
     
-    fn.init_appearance(logo, title)
+    #fn.init_appearance(logo, title)
     
     if 'type' not in st.session_state :
         st.session_state.type_fichier = None
