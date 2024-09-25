@@ -1313,7 +1313,7 @@ def init_appearance(logo, title):
 
     log, titl = st.columns([1,2])
     
-    log.image(logo, width=200)
+    # log.image(logo, width=200)
     
     # Titre de l'application
     titl.title(title)
@@ -1580,6 +1580,8 @@ mandatory_cols = {
         },
         "cotisations": {
             "id_ent": "text",
+            "id_assuré": "text",
+            "id_bénéf": "text",
             "siren": "text",
             "siret": "text",
             "date_adh": "date",
@@ -1630,7 +1632,7 @@ mandatory_cols = {
     "prévoyance": {
         "prestations": {
             "id_ent": "text",
-            # "id_assuré": "text",
+            "id_assuré": "text",
             "id_bénéf": "text",
             "siren": "text",
             "siret": "text",
@@ -1643,6 +1645,7 @@ mandatory_cols = {
             }, 
         "cotisations": {
             "id_ent": "text",
+            "id_assuré": "text",
             "id_bénéf": "text",
             "siren": "text",
             "siret": "text",

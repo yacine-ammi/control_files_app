@@ -2,13 +2,11 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 import functions as fn
-from numpy import nan
+import os
+
 
 # streamlit run "C:\Users\Yacine AMMI\Yacine\Notebooks\AOPS\Scripts\Controle Fichiers\control_app.py"--server.maxUploadSize 3000
 
-# controller le id effectifs match et les id prestations matchs
-# id en prest non presents en effectifs
-# si siren est 9 char 
 
 def init_session_state_data():
     st.session_state.renamed_preview = []
@@ -19,16 +17,19 @@ def init_session_state_data():
     st.session_state.warnings_bad = None
 
 def main():
-    
-    json_path = r'\renaming.json'
-    MAPPINGS_FILE = r'C:\Users\Yacine AMMI\Yacine\Notebooks\AOPS\Notebooks\Concat app\Outil Comptes\mappings.json'
-    page_ico = r"C:\Users\Yacine AMMI\Yacine\Notebooks\Concat app\merge.png"
-    logo = r"C:\Users\Yacine AMMI\Yacine\Notebooks\Concat app\Logo AOPS conseil.png"
+    # Get the current directory (where your app is running)
+    current_dir = os.path.dirname(__file__)
+
+    # Use relative paths to the JSON, images, and other resources
+    json_path = os.path.join(current_dir, 'resources', 'renaming.json')
+    MAPPINGS_FILE = os.path.join(current_dir, 'resources', 'mappings.json')
+    page_ico = os.path.join(current_dir, 'resources', 'merge.png')
+    logo = os.path.join(current_dir, 'resources', 'Logo_AOPS_conseil.png')
     title = 'Outil de :orange[Contrôle] des Fichiers '
     
     st.set_page_config(layout="wide", page_title='Controle des Fichiers', page_icon=page_ico)
     
-    #fn.init_appearance(logo, title)
+    fn.init_appearance(logo, title)
     
     if 'type' not in st.session_state :
         st.session_state.type_fichier = None
