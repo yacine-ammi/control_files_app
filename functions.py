@@ -1313,7 +1313,7 @@ def init_appearance(logo, title):
 
     log, titl = st.columns([1,2])
     
-    # log.image(logo, width=200)
+    log.image(logo, width=200)
     
     # Titre de l'application
     titl.title(title)
