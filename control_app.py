@@ -20,7 +20,7 @@ def init_session_state_data():
 
 def main():
     
-    json_path = r'C:\Users\Yacine AMMI\Yacine\Notebooks\AOPS\Scripts\renaming.json'
+    json_path = r'\renaming.json'
     MAPPINGS_FILE = r'C:\Users\Yacine AMMI\Yacine\Notebooks\AOPS\Notebooks\Concat app\Outil Comptes\mappings.json'
     page_ico = r"C:\Users\Yacine AMMI\Yacine\Notebooks\Concat app\merge.png"
     logo = r"C:\Users\Yacine AMMI\Yacine\Notebooks\Concat app\Logo AOPS conseil.png"
