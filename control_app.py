@@ -268,7 +268,7 @@ def main():
                         
                         # Contro if df_prest is uploaded
                         if 'df_prest' in st.session_state:
-                            if st.session_state.df_eff is not None:
+                            if st.session_state.df_prest is not None:
                                 st.session_state.warnings_bad_ids = fn.id_verif(df_prest_cot_raw=st.session_state.df_prest, df_effectifs_raw=st.session_state.final_df, type_bdd=st.session_state.type, rename=False, inverse=False)
                                 st.session_state.warnings_bad_ids_inverse = fn.id_verif(df_prest_cot_raw=st.session_state.df_prest, df_effectifs_raw=st.session_state.final_df, type_bdd=st.session_state.type, rename=False, inverse=True)
                         
