@@ -1,6 +1,4 @@
 import streamlit as st
-import pandas as pd
-from io import BytesIO
 import functions as fn
 import os
 
@@ -15,6 +13,8 @@ def init_session_state_data():
     st.session_state.final_df = None
     st.session_state.df_1 = None
     st.session_state.warnings_bad = None
+    st.session_state.tmp = None
+    st.session_statecontrolled = False
 
 def main():
     # Get the current directory (where your app is running)
@@ -23,7 +23,7 @@ def main():
     # Use relative paths to the JSON, images, and other resources
     json_path = os.path.join(current_dir, 'resources', 'renaming.json')
     MAPPINGS_FILE = os.path.join(current_dir, 'resources', 'mappings.json')
-    page_ico = os.path.join(current_dir, 'resources', 'merge.png')
+    page_ico = os.path.join(current_dir, 'resources', 'tab_logo.png')
     logo = os.path.join(current_dir, 'resources', 'Logo_AOPS_conseil.png')
     title = 'Outil de :orange[Contrôle] des Fichiers '
 
@@ -53,11 +53,11 @@ def main():
     if st.session_state.type_fichier == "santé":
         
         # selectionner le type de fichier ["prestations", "cotisations", "effectifs"] 
-        st.session_state.type = cols[1].selectbox(label="Selectionnez le type de fichier", options=types_dispo, placeholder=f'Type de fichier', index=None, key=f"type_w")
+        st.session_state.type = cols[1].selectbox(label="Selectionnez le type de fichier", options=types_dispo, placeholder='Type de fichier', index=None, key="type_w")
         if st.session_state.type is not None:
             
             # selectionner l'assureur
-            st.session_state.assr = cols[2].selectbox(label="Selectionnez l'assureur", options=assr_dispo, placeholder=f'Assureur', index=None, key=f"assr_w")
+            st.session_state.assr = cols[2].selectbox(label="Selectionnez l'assureur", options=assr_dispo, placeholder='Assureur', index=None, key="assr_w")
             
             # with cols[2]:
             #     cols[2].markdown("<div style='width: 1px; height: 28px'></div>", unsafe_allow_html=True)
@@ -88,10 +88,10 @@ def main():
                                                                                                                 'incapacité',
                                                                                                                 'invalidité',
                                                                                                                 'décès'], 
-                                                            placeholder=f'Type de risque', index=None, key="type_r")
+                                                            placeholder='Type de risque', index=None, key="type_r")
             
             if (st.session_state.type is not None) and ((st.session_state.type_risque is not None) or (st.session_state.type == 'cotisations')):
-                st.session_state.assr = cols[2].selectbox(label="Selectionnez l'assureur", options=assr_dispo, index=None, key=f"assr_w")            
+                st.session_state.assr = cols[2].selectbox(label="Selectionnez l'assureur", options=assr_dispo, index=None, key="assr_w")            
 
     uploaded_file = None
 
@@ -107,69 +107,6 @@ def main():
             
             uploaded_file.seek(0)
             df_preview = fn.load_file_preview(uploaded_file, nrows=50)
-            
-            # # Initial rename configuration based on selected type and insurer
-            # original_names = df_preview.columns
-            # new_names = fn.get_col_maps(type_fichier=st.session_state.type_fichier ,type_bdd=st.session_state.type,  assureur=st.session_state.assr, json_path=json_path)
-            
-            # # Select only columns corresponding to our original col names
-            # new_names = {k:v for k,v in new_names.items() if k in original_names}
-            
-            
-            # rename_df = pd.DataFrame({col:None for col in fn.mandatory_cols.get(st.session_state.type_fichier, {})[st.session_state.type]}.items(), columns=['Colonne', 'Original'])
-            # if new_names:
-            #     # map the 'Original' col with the new_names from 'Colonne'
-            #     rename_df['Original'] = rename_df['Colonne'].map({v:k for k,v in new_names.items()})
-            
-            # # st.write(rename_df.to_dict(orient='list'))
-            
-            # # rename_df['Selection'] = True
-            # rename_df = rename_df[[
-            #     # "Selection", 
-            #     "Colonne", 
-            #     "Original"
-            #     ]]
-            
-            # # Data editor column configuration
-            # col1, col2 = st.columns([1, 2])
-            
-            # with col1:
-            #     st.subheader("Renommer les colonnes")
-            #     new_column_names = st.data_editor(
-            #         rename_df,
-            #         # num_rows="dynamic",
-            #         column_config={
-            #             # 'Selection': st.column_config.CheckboxColumn(label='Select',
-            #             #                                              help='Selectionner les colonnes a inclure dans le controle',
-            #             #                                              width=3),
-            #             "Colonne": st.column_config.Column(label="Colonnes"),
-            #             "Original": st.column_config.SelectboxColumn(label='Nom original du fichier', required=False, options=(list(set(original_names))))
-            #         },
-            #         hide_index=True,
-            #         key="column_name_editor",
-            #         use_container_width=True
-            #     )
-            
-            #     # Update DataFrame with the new column names from data editor
-            #     rename_dict_updated = dict(zip(new_column_names["Original"], new_column_names["Colonne"]))
-                        
-            
-            # with col2:
-            #     st.subheader("Aperçu des données")
-                
-            #     # Rename the preview DataFrame based on the updated rename dictionary
-            #     df_preview_renamed = df_preview.rename(columns=rename_dict_updated)
-
-            #     # Reorder columns: renamed columns first, followed by remaining ones
-            #     renamed_columns =  [renamed for original, renamed in rename_dict_updated.items() if original not in [None, 'null', nan, "NaN", ""]] #list(rename_dict_updated.values())
-            #     remaining_columns = [col for col in df_preview_renamed.columns if col not in renamed_columns]
-            #     ordered_columns = renamed_columns + remaining_columns
-                
-            #     # Apply the styling function to highlight renamed columns
-            #     styled_df = fn.highlight_renamed(df_preview_renamed[ordered_columns].head(50), rename_dict_updated)
-
-            #     # Display the styled DataFrame with reordered columns
-            #     st.dataframe(styled_df, hide_index=True)
             
             rename_dict = fn.get_col_maps(type_fichier=st.session_state.type_fichier ,type_bdd=st.session_state.type,  assureur=st.session_state.assr, json_path=json_path)
             mandatory_cols = fn.mandatory_cols.get(st.session_state.type_fichier, {})[st.session_state.type]
@@ -271,13 +208,18 @@ def main():
             #------------------------------------------------- General Control section------------------------------------------------------------------------------ 
             st.divider()
             if st.session_state.final_df is not None:
-                st.header('Contrôle du fichier')
+                st.header('Contrôle global du fichier')
                 with st.spinner('Chargement en cours ....'):
                     fn.resume_bdd(st.session_state.final_df, st.session_state.type)
+                    
+                    
+                
                             
             #------------------------------------------------- BAD Control section------------------------------------------------------------------------------
                 st.divider()
-                control_bad = st.toggle('Contrôle spécifique a la BAD')
+                if  st.session_state.type_fichier == 'santé':
+                    control_bad = st.toggle('Contrôle spécifique a la BAD santé')
+                    
                 if control_bad:
                     
                     st.header("Points de Contrôles BAD")
@@ -287,30 +229,59 @@ def main():
                     mandatory_cols = ['id_bénéf', 'id_assuré', 'id_ent', 'siren']
                     rename_dict = fn.get_col_maps(type_fichier=st.session_state.type_fichier ,type_bdd=st.session_state.type,  assureur=st.session_state.assr, json_path=json_path)
                     st.session_state.df_1 = fn.upload_and_rename(title="Charger T-1", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_1_up')
-                    
-                    if st.session_state.df_1 is not None:
-                        st.success('T-1 importé avec succès')
             
                 #------------------------------------------------- Control coherence and display warnings------------------------------------------------------------------------------
-                    if (st.session_state.type_fichier == 'santé') and (st.session_state.type == 'prestations'):
-                        st.session_state.df_eff = fn.upload_and_rename(title="Charger effectifs", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_eff_up')
+                    if st.session_state.type_fichier == 'santé':
+                        if st.session_state.type in ['prestations', 'cotisations']:
+                            st.session_state.tmp = None
+                            st.session_state.tmp = fn.upload_and_rename(title="Charger effectifs", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_eff_up')
+                            if st.session_state.tmp is not None:
+                                st.session_state.df_eff = st.session_state.tmp
+                            
+                        elif  st.session_state.type == 'effectifs':
+                            st.session_state.tmp = None
+                            st.session_state.tmp = fn.upload_and_rename(title="Charger prestations", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_prest_up')
+                            if st.session_state.tmp is not None:
+                                st.session_state.df_prest = st.session_state.tmp
+                        # elif st.session_state.type == 'cotisations':
+                        #     st.session_state.df_cot = fn.upload_and_rename(title="Charger prestations", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_prest_up')
                         
+
+                #------------------------------------------------- Control BAD and display warnings------------------------------------------------------------------------------  
+                    st_col1, st_col2 = st.columns([2, 1])
+                
+                    with st_col1:
+                        dates = fn.get_interactive_quarters()
+                        
+                    st_col2.markdown("<div style='width: 1px; height: 28px'></div>", unsafe_allow_html=True)
+                    if st_col2.button(f"Contrôler les {st.session_state.type.title()}"):
+                        # Contrôle des données
+                        
+                        # Global control
+                        st.session_state.warnings_bad =  fn.controle(st.session_state.final_df, type_bdd=st.session_state.type, assureur=st.session_state.assr, dft_1_raw=st.session_state.df_1, rename_dict=None, raise_err=False, dates=dates)
+                        
+                        # Controle if df_eff is uploaded
                         if 'df_eff' in st.session_state:
                             if st.session_state.df_eff is not None:
-                                st.session_state.warnings_bad_ids = fn.eff_prest_id_verif(df_prestations_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, assureur=st.session_state.assr, rename=False, inverse=False)
-                                st.session_state.warnings_bad_ids_inverse = fn.eff_prest_id_verif(df_prestations_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, assureur=st.session_state.assr, rename=False, inverse=True)
-
-                    elif (st.session_state.type_fichier == 'santé') and (st.session_state.type == 'effectifs'):
-                        st.session_state.df_prest = fn.upload_and_rename(title="Charger prestations", mandatory_cols=mandatory_cols, rename_dict=rename_dict, json_path=json_path, types=['csv', 'xlsx', 'xls', 'xlsb', 'pkl', 'pickle'], key='df_prest_up')
-                
-                #------------------------------------------------- Control BAD and display warnings------------------------------------------------------------------------------  
-                    st.session_state.warnings_bad = fn.controle_bad(df=st.session_state.final_df, df_1=st.session_state.df_1)
-                    if  st.session_state.warnings_bad is not None:
-                        fn.display_warnings(st.session_state.warnings_bad, title="Contrôles BAD", header="Résultat")        
+                                st.session_state.warnings_bad_ids = fn.id_verif(df_prest_cot_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, type_bdd=st.session_state.type, rename=False, inverse=False)
+                                st.session_state.warnings_bad_ids_inverse = fn.id_verif(df_prest_cot_raw=st.session_state.final_df, df_effectifs_raw=st.session_state.df_eff, type_bdd=st.session_state.type, rename=False, inverse=True)
+                        
+                        # Contro if df_prest is uploaded
+                        if 'df_prest' in st.session_state:
+                            if st.session_state.df_eff is not None:
+                                st.session_state.warnings_bad_ids = fn.id_verif(df_prest_cot_raw=st.session_state.df_prest, df_effectifs_raw=st.session_state.final_df, type_bdd=st.session_state.type, rename=False, inverse=False)
+                                st.session_state.warnings_bad_ids_inverse = fn.id_verif(df_prest_cot_raw=st.session_state.df_prest, df_effectifs_raw=st.session_state.final_df, type_bdd=st.session_state.type, rename=False, inverse=True)
+                        
+                        # display results
+                        if  st.session_state.warnings_bad is not None:
+                            fn.display_warnings(st.session_state.warnings_bad, title="Contrôles BAD", header="Résultat")
+                            
                         if  'warnings_bad_ids' in  st.session_state :
-                            fn.display_warnings(st.session_state.warnings_bad_ids, title="Prestations vs Effectifs", header="Prestations manquantes dans Effectifs ")
+                            fn.display_warnings(st.session_state.warnings_bad_ids, title=f"{st.session_state.type.title()} vs Effectifs", header=f"IDs {st.session_state.type.title()} manquants dans Effectifs ")
+                            
                         if  'warnings_bad_ids_inverse' in  st.session_state :
-                            fn.display_warnings(st.session_state.warnings_bad_ids_inverse, title="Effectifs vs Prestations", header="Effectifs manquants dans Prestations" )
+                            fn.display_warnings(st.session_state.warnings_bad_ids_inverse, title=f"Effectifs vs {st.session_state.type.title()}", header=f"IDs Effectifs manquants dans {st.session_state.type.title()}" )
+
 
 if __name__ == "__main__":
     main()

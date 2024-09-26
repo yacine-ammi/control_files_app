@@ -2,52 +2,52 @@ import pandas as pd
 import numpy as np
 from streamlit import warning
 import streamlit as st
-from datetime import datetime, date
+import datetime
 from os import path
 from json import load, dump
 from io import BytesIO
 
 
 
-def correction_dates_integrale(df_raw, col, date_format='%m/%d/%Y'):
+# def correction_dates_integrale(df_raw, col, date_format='%m/%d/%Y'):
     
-    df = df_raw[[col]].copy()
+#     df = df_raw[[col]].copy()
 
-    # Convertir toutes les valeurs en chaînes de caractères
-    df[col] = df[col].astype(str)
+#     # Convertir toutes les valeurs en chaînes de caractères
+#     df[col] = df[col].astype(str)
 
-    # Remplacer les valeurs spécifiques par des dates de référence
-    df[col] = df[col].replace('2958465', '2099-12-31')
+#     # Remplacer les valeurs spécifiques par des dates de référence
+#     df[col] = df[col].replace('2958465', '2099-12-31')
 
-    # Identifier et convertir les valeurs numériques en dates
-    numeric_mask = pd.to_numeric(df[col], errors='coerce').notna()
-    df.loc[numeric_mask, col] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.loc[numeric_mask, col].astype(int), 'D')
-    df.loc[numeric_mask, col] = df.loc[numeric_mask, col].astype(str)
+#     # Identifier et convertir les valeurs numériques en dates
+#     numeric_mask = pd.to_numeric(df[col], errors='coerce').notna()
+#     df.loc[numeric_mask, col] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.loc[numeric_mask, col].astype(int), 'D')
+#     df.loc[numeric_mask, col] = df.loc[numeric_mask, col].astype(str)
     
-    # Supprimer les chaînes de temps
-    df[col] = df[col].str.replace(" 00:00:00", "")
+#     # Supprimer les chaînes de temps
+#     df[col] = df[col].str.replace(" 00:00:00", "")
     
-    # Remplacer '9999' et '2999' par '2099'
-    df[col] = df[col].str.replace('9999', '2099')
-    df[col] = df[col].str.replace('2999', '2099')
+#     # Remplacer '9999' et '2999' par '2099'
+#     df[col] = df[col].str.replace('9999', '2099')
+#     df[col] = df[col].str.replace('2999', '2099')
     
-    # Identifier et convertir les dates au format avec tirets
-    dash_mask = df[col].str.contains('-')
-    slash_mask = df[col].str.contains('/')
+#     # Identifier et convertir les dates au format avec tirets
+#     dash_mask = df[col].str.contains('-')
+#     slash_mask = df[col].str.contains('/')
 
-    # Traiter les dates avec tirets
-    if dash_mask.any():
-        df.loc[dash_mask, col] = pd.to_datetime(df.loc[dash_mask, col])
+#     # Traiter les dates avec tirets
+#     if dash_mask.any():
+#         df.loc[dash_mask, col] = pd.to_datetime(df.loc[dash_mask, col])
 
-    # Traiter les dates avec barres obliques
-    if slash_mask.any():
-        # Utiliser to_datetime avec coerce pour tenter les formats les plus courants
-        try:
-            df.loc[slash_mask, col] = pd.to_datetime(df.loc[slash_mask, col], format=date_format)
-        except ValueError:
-            df.loc[slash_mask, col] = pd.to_datetime(df.loc[slash_mask, col], format='%d/%m/%Y')
+#     # Traiter les dates avec barres obliques
+#     if slash_mask.any():
+#         # Utiliser to_datetime avec coerce pour tenter les formats les plus courants
+#         try:
+#             df.loc[slash_mask, col] = pd.to_datetime(df.loc[slash_mask, col], format=date_format)
+#         except ValueError:
+#             df.loc[slash_mask, col] = pd.to_datetime(df.loc[slash_mask, col], format='%d/%m/%Y')
 
-    return pd.to_datetime(df[col])
+#     return pd.to_datetime(df[col])
 
 def is_valid_siren(column):
     column = np.asarray(column, dtype=str)
@@ -368,7 +368,7 @@ def check_date_formats(df_raw, col, date_patterns=None, return_df=False, warn_ty
         try:
             valid_dates = pd.to_datetime(df[col], format=pattern, errors='coerce').notna()
             valid_mask |= valid_dates
-        except Exception as e:
+        except Exception :
             continue
 
     # Calculer le nombre de dates invalides
@@ -449,7 +449,7 @@ def check_advanced_date_formats(df, col, date_formats=None, warn_type='warning')
         ]
         date_col = correction_dates_integrale(df, col, date_formats=date_formats)
         return None
-    except (ValueError) as error:
+    except (ValueError):
         return {warn_type: f'invalid date rows in {col} have invalid date formats.'}
 
 def compare_dates(df_raw, col1, col2, condition='<', return_df=False, warn_type='warning'):
@@ -1160,18 +1160,18 @@ def check_cotisations(assureur, df_raw, dates, dft_1_raw=None, rename_dict=None,
     return resultats
 
 @st.cache_data
-def eff_prest_id_verif(df_prestations_raw, df_effectifs_raw, assureur, rename=True, rename_dict=None, inverse=False):
+def id_verif(df_prest_cot_raw, df_effectifs_raw, type_bdd, rename=True, rename_dict=None, inverse=False):
     """
     Check if the unique ids in 'prestations' are present in 'effectifs' (or vice versa if inverse=True).
     """
     
-    if rename:
-        # Rename data
-        df_prestations_raw = rename_func(df_prestations_raw, type_fichier='santé', type_bdd='prestations', assureur=assureur, rename_dict=rename_dict)
-        df_effectifs_raw = rename_func(df_effectifs_raw, type_fichier='santé', type_bdd='effectifs', assureur=assureur, rename_dict=rename_dict)
+    # if rename:
+    #     # Rename data
+    #     df_prest_cot_raw = rename_func(df_prest_cot_raw, type_fichier='santé', type_bdd='prestations', assureur=assureur, rename_dict=rename_dict)
+    #     df_effectifs_raw = rename_func(df_effectifs_raw, type_fichier='santé', type_bdd='effectifs', assureur=assureur, rename_dict=rename_dict)
     
     # Check for duplicate columns
-    df_prestations = remove_duplicate_columns(df_prestations_raw)
+    df_prestations = remove_duplicate_columns(df_prest_cot_raw)
     df_effectifs = remove_duplicate_columns(df_effectifs_raw)
     
     # Columns to check for unique IDs
@@ -1198,9 +1198,9 @@ def eff_prest_id_verif(df_prestations_raw, df_effectifs_raw, assureur, rename=Tr
                 percentage = (missing_count / total_ids) * 100 if total_ids > 0 else 0
                 
                 if not inverse:
-                    message = { 'warning': f'{missing_count}  ids uniques {col} en Prestations ne sont pas presents en Effectifs, {percentage:.2f}% du total des id uniques en Prestations.' }
+                    message = { 'warning': f'{missing_count}  ids uniques {col} en {type_bdd.title()} ne sont pas presents en Effectifs, {percentage:.2f}% du total des id uniques en {type_bdd}.' }
                 else:
-                    message = { 'warning': f'{missing_count} ids uniques {col} en Effectifs ne sont pas presents en Prestations, {percentage:.2f}% du total des id uniques en Effectifs.' }
+                    message = { 'warning': f'{missing_count} ids uniques {col} en Effectifs ne sont pas presents en {type_bdd.title()}, {percentage:.2f}% du total des id uniques en Effectifs.' }
                 
                 results[col].append(message)
     
@@ -1321,15 +1321,89 @@ def init_appearance(logo, title):
     # Separation
     st.divider()
 
-def get_current_quarter_dates():
-    today = datetime.today()
-    quarter = (today.month - 1) // 3 + 1
-    start_date = date(today.year, 3 * quarter - 2, 1)
+# Function to calculate quarter start and end dates based on an offset
+def get_quarter_dates(offset=0, date=None):
+    """
+    Get the start and end dates of the current, previous, or next quarter, based on the offset.
+    
+    Args:
+    - offset (int): Offset for the quarter (-1 for previous, 1 for next, etc.).
+    - date (datetime): The reference date (defaults to today).
+    
+    Returns:
+    - (start_date, end_date): Start and end dates of the specified quarter.
+    """
+    
+    
+    if date is None:
+        date = datetime.datetime.today()
+
+    # Calculate the current quarter (1-4)
+    quarter = (date.month - 1) // 3 + 1
+    # Adjust quarter based on offset (-1 for previous, 1 for next)
+    quarter += offset
+    
+    # Adjust the year if needed
+    year = date.year + (quarter - 1) // 4
+    quarter = (quarter - 1) % 4 + 1  # Keep quarter between 1 and 4
+    
+    # Calculate start and end dates of the quarter
+    start_date = datetime.date(year, 3 * quarter - 2, 1)
     if quarter < 4:
-        end_date = date(today.year, 3 * quarter + 1, 1) - pd.DateOffset(days=1)
+        end_date = datetime.date(year, 3 * quarter + 1, 1) - datetime.timedelta(days=1)
     else:
-        end_date = date(today.year, 12, 31)
+        end_date = datetime.date(year, 12, 31)
+
     return start_date, end_date
+
+def get_interactive_quarters():
+    # Initialize session state for quarter offset if not already set
+    if 'quarter_offset' not in st.session_state:
+        st.session_state.quarter_offset = 0  # Start with the current quarter
+
+    # Layout: Display the current quarter dates and provide buttons for navigation
+    col1, col2, col3 = st.columns([1, 3, 1])
+
+    # Previous Quarter Button
+    col1.markdown("<div style='width: 1px; height: 28px'></div>", unsafe_allow_html=True)
+    with col1:
+        if st.button("Trimestre précédent"):
+            st.session_state.quarter_offset -= 1  # Move one quarter back
+
+    # Show the current quarter's date range
+    with col2:
+        # Get the quarter dates based on the current offset
+        start_date, end_date = get_quarter_dates(offset=st.session_state.quarter_offset)
+        
+        # Display the date input with the quarter's start and end dates
+        dates = st.date_input(
+            "Select the control period",
+            (start_date, end_date),
+            format="DD-MM-YYYY"
+        )
+
+    # Next Quarter Button
+    col3.markdown("<div style='width: 1px; height: 28px'></div>", unsafe_allow_html=True)
+    with col3:
+        if st.button("Trimestre suivant"):
+            st.session_state.quarter_offset += 1  # Move one quarter forward
+
+    return dates
+
+# def get_quarter_dates(date=None):
+    
+#     if date is None:
+#         date = datetime.today()
+        
+#     quarter = (date.month - 1) // 3 + 1
+#     start_date = date(date.year, 3 * quarter - 2, 1)
+#     if quarter < 4:
+#         end_date = date(date.year, 3 * quarter + 1, 1) - pd.DateOffset(days=1)
+#     else:
+#         end_date = date(date.year, 12, 31)
+#     return start_date, end_date
+
+
 
 def get_dtypes(rename_dict):
     # Invert the rename_dict to map new column names to original names
@@ -2447,26 +2521,6 @@ def process_column_renaming(df_preview, rename_dict, mandatory_cols):
     
     return rename_dict_updated, renamed_columns
 
-def controle_bad(df, df_1=None):
-    col1, col2 = st.columns([2, 1])
-                
-    with col1:
-        # Get the start and end dates of the current quarter
-        start_date, end_date = get_current_quarter_dates()
-        
-        # Display date input with default values set to the current quarter
-        dates = st.date_input(
-            "Selectionner la période de controle", 
-            (start_date, end_date),
-            format="DD-MM-YYYY"
-        )
-        
-    col2.markdown("<div style='width: 1px; height: 28px'></div>", unsafe_allow_html=True)
-    if col2.button("Contrôler le fichier"):
-        # Contrôle des données
-        
-        return controle(df, type_bdd=st.session_state.type, assureur=st.session_state.assr, dft_1_raw=df_1, rename_dict=None, raise_err=False, dates=dates)
-
 @st.cache_data
 def display_warnings(warnings, title, header):
     
@@ -2499,13 +2553,14 @@ def upload_and_rename(title, mandatory_cols, rename_dict, json_path, types=['csv
         uploaded_file = st.file_uploader("", accept_multiple_files=False, type=types, key=key)
         
         if uploaded_file:
+            df = None
             
             df_preview = load_file_preview(uploaded_file, nrows=50)
             
             rename_dict_updated, renamed_columns = process_column_renaming(df_preview, rename_dict, mandatory_cols)
 
             import_dtypes = get_dtypes(rename_dict_updated)
-
+                
             if st.button('Valider', key=key + '_btn'):
                 df = load_file(uploaded_file, dtype=import_dtypes)
                 df = rename_func(
@@ -2519,7 +2574,12 @@ def upload_and_rename(title, mandatory_cols, rename_dict, json_path, types=['csv
                     update_json=False,
                     json_file=json_path,
                 )[renamed_columns]
-                
-                
-                
-                return df
+                st.session_state['tmp'] = df  # Store in session state instead of returning
+                st.session_state[key + '_btn_clicked'] = True
+
+            if key + '_btn_clicked' in st.session_state:
+                render_custom_text("Fichier importé avec succès", color="#339900")
+                return st.session_state['tmp']  # Return the DataFrame from session state
+            else:
+                render_custom_text("Veuillez valider votre selection", color="#ffbc11")
+            

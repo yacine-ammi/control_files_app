@@ -12,7 +12,7 @@
                 "Niveau de couverture Facultative": "niveau_couverture_fac",
                 "Catégorie assuré": "cat_assuré",
                 "Régime de cotisation": "regime",
-                "NaN": "sexe",
+                "Sexe": "sexe",
                 "Code acte": "code_acte",
                 "Libellé acte": "libellé_acte",
                 "Famille acte": "famille_acte",
@@ -32,7 +32,6 @@
                 "Identifiant entreprise": "id_ent",
                 "Identifiant ouvrant droit": "id_assuré",
                 "Clé unique assuré": "id_bénéf",
-                "NaN": "siret",
                 "Lien type bénéficiaire": "type_bénéf",
                 "Affiliation Base / Option": "niveau_couverture_fac",
                 "Catégorie actifs, portables, suspendus…": "cat_assuré",
@@ -57,7 +56,6 @@
                 "Identifiant entreprise": "id_ent",
                 "Identifiant Assuré": "id_assuré",
                 "Clé unique assuré": "id_bénéf",
-                "NaN": "niveau_couverture_oblg",
                 "Lien type bénéficiaire": "type_bénéf",
                 "Affiliation Base / Option": "niveau_couverture_fac",
                 "Catégorie actifs, portables, suspendus…": "cat_assuré",
@@ -81,7 +79,6 @@
             "mh": {},
             "hm": {},
             "smf": {
-                "NaN": "RàC",
                 "NumOuvrantDroit": "id_assuré",
                 "IdBeneficiaire": "id_bénéf",
                 "Siret": "siret",
@@ -106,9 +103,10 @@
         "cotisations": {
             "aesio": {
                 "Identifiant Entreprise": "id_ent",
+                "Identifiant ouvrant droit": "id_assuré",
+                "Identifiant bénéficiaire": "id_bénéf",
                 "Code SIREN": "siren",
                 "Code SIRET": "siret",
-                "NaN": "cot_TTC",
                 "Trimestre de Survenance": "tr_surv",
                 "Année comptable": "annee_comptable",
                 "Année de survenance": "annee_surv",
@@ -119,12 +117,10 @@
                 "Niveau de couverture Obligatoire Entreprise": "niveau_couverture_oblg",
                 "Niveau de couverture Facultatif": "niveau_couverture_fac",
                 "Cotisation BASE Obligatoire TTC": "base_TTC",
-                "Cotisation option Facultative TTC": "option_TTC",
-                "null": "option_fac_TTC"
+                "Cotisation option Facultative TTC": "option_TTC"
             },
             "ag2r": {
                 "Identifiant Entreprise": "id_ent",
-                "NaN": "option_fac_TTC",
                 "Date d'adhésion": "date_adh",
                 "Date de Sortie": "date_sortie",
                 "Trimestre de survenance": "tr_surv",
@@ -138,7 +134,6 @@
             },
             "macif": {
                 "Identifiant Entreprise": "id_ent",
-                "NaN": "option_fac_TTC",
                 "Date d'adhésion": "date_adh",
                 "Date de Sortie": "date_sortie",
                 "Trimestre de survenance": "tr_surv",

@@ -47,7 +47,8 @@
         "confort": "Option 1",
         "confort+": "Option 2",
         "ameliore 1": "Option 1",
-        "nd": "Socle"
+        "nd": "Socle",
+        "conf": "Option 1"
     },
     "cat_assuré": {
         "actifs": "Actifs",
@@ -72,6 +73,7 @@
         "salarié/conjoint/enfant": "Assuré",
         "ayd": "Conjoint",
         "chef de famille": "Assuré",
-        "autre": "Enfant"
+        "autre": "Enfant",
+        "assure": "Assuré"
     }
 }
