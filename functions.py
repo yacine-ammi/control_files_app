@@ -290,7 +290,7 @@ def check_missing(df, col, warn_type='warning'):
     # Check for missing values in a column
     missing = df[col].isnull().sum()
     if missing > 0:
-        return {warn_type: f'{missing} rows ({(missing/len(df))*100:.2f}%) have missing values in {col}.'}
+        return {warn_type: f'{missing} lignes ({(missing/len(df))*100 :.2f}%) ont des valeurs manquantes dans {col}.'}
     return None
 
 def check_id_length(df, col_name, length, skip_na=False, return_df=False, warn_type='warning'):
@@ -302,7 +302,7 @@ def check_id_length(df, col_name, length, skip_na=False, return_df=False, warn_t
     if not invalid_ids.empty:
         if return_df:
             return invalid_ids
-        return {warn_type: f'{len(invalid_ids)} ids ({(len(invalid_ids)/len(df))*100:.2f})% in {col_name} are not {length} characters long.'}
+        return {warn_type: f'{len(invalid_ids)} IDs ({(len(invalid_ids)/len(df))*100:.2f})% en {col_name} ne contiennent pas {length} caractères.'}
     return None
 
 def check_ids_presence(df_t1, df_t2, col_name, return_df=False, warn_type='warning'):
@@ -311,7 +311,7 @@ def check_ids_presence(df_t1, df_t2, col_name, return_df=False, warn_type='warni
         if return_df:
             return missing_ids
         percentage = len(missing_ids) / len(set(df_t2[col_name])) * 100
-        return {warn_type : f'{len(missing_ids)} ids in {col_name} from t are not present in t-1, which is {percentage:.2f}% of total ids in t.'}
+        return {warn_type : f'{len(missing_ids)} IDs de {col_name}  de t ne sont pas présents dans t-1, ce qui représente {percentage:.2f}% du total des identifiants de t.'}
     return None
 
 def check_special_chars(df, col_name, special_chars, return_df=False, warn_type='warning'):
@@ -327,7 +327,7 @@ def check_special_chars(df, col_name, special_chars, return_df=False, warn_type=
     if not special_ids.empty:
         if return_df:
             return special_ids
-        return {warn_type : f'{len(special_ids)} ids in {col_name} contain special characters {special_chars}.'}
+        return {warn_type : f'{len(special_ids)} lignes ou les IDs dans {col_name} contiennent des caractères spéciaux {special_chars}.'}
     return None
 
 def check_id_length_and_content(df, col_name, length, required_chars, return_df=False, warn_type='warning'):
@@ -335,7 +335,7 @@ def check_id_length_and_content(df, col_name, length, required_chars, return_df=
     if not invalid_ids.empty:
         if return_df:
             return invalid_ids
-        return {warn_type: f'{len(invalid_ids)} ids in {col_name} are not {length} characters long or do not contain {required_chars}.'}
+        return {warn_type: f'{len(invalid_ids)} IDs dans {col_name} ne contient pas {length} caractères ou ne contient pas {required_chars}.'}
     return None
 
 def check_date_formats(df_raw, col, date_patterns=None, return_df=False, warn_type='warning'):
@@ -378,7 +378,7 @@ def check_date_formats(df_raw, col, date_patterns=None, return_df=False, warn_ty
         if return_df:
             return df[~valid_mask]
         percentage=(invalid_dates_count/df.shape[0])*100
-        return {warn_type: f'{invalid_dates_count} rows ({percentage:.2f}%) in {col} have invalid date formats.'}
+        return {warn_type: f'{invalid_dates_count} lignes ({percentage:.2f}%) dans {col} ont des formats de date non valides.'}
     
     return None
 
@@ -450,7 +450,7 @@ def check_advanced_date_formats(df, col, date_formats=None, warn_type='warning')
         date_col = correction_dates_integrale(df, col, date_formats=date_formats)
         return None
     except (ValueError):
-        return {warn_type: f'invalid date rows in {col} have invalid date formats.'}
+        return {warn_type: f'Les lignes de {col} ont des formats de date non valides.'}
 
 def compare_dates(df_raw, col1, col2, condition='<', return_df=False, warn_type='warning'):
     # Crée une copie des colonnes d'intérêt
@@ -488,7 +488,7 @@ def compare_dates(df_raw, col1, col2, condition='<', return_df=False, warn_type=
     
     # Créer le message d'avertissement ou d'alerte
     if num_invalid > 0:
-        message = {warn_type: f'{num_invalid} rows ({percentage_invalid:.2f}%) do not meet the condition {col1} {condition} {col2}.'}
+        message = {warn_type: f'{num_invalid} lignes ({percentage_invalid:.2f}%) ne remplissent pas la condition {col1} {condition} {col2}.'}
     else:
         message = None
     
@@ -527,7 +527,7 @@ def check_valid_values(df, col, valid_values, strip=False, replace=False, lower=
     if len(invalid_values) > 0:
         if len(invalid_values) > 5:
             invalid_values = invalid_values[:5]
-        return {warn_type: f'{len(invalid_values)} rows in {col} have invalid values {invalid_values}.'}
+        return {warn_type: f'{len(invalid_values)} lignes de {col} ont des valeurs non valides {invalid_values}.'}
     return None
 
 def restructure_results(results):
@@ -569,7 +569,7 @@ def check_date_range(df_raw, col, min_date, max_date, return_df=False, warn_type
     
     # Créer le message d'alerte ou d'avertissement
     if num_invalid > 0:
-        message = {warn_type: f'{num_invalid} rows ({percentage_invalid:.2f}%) in {col} are not within the date range {min_date} to {max_date}.'}
+        message = {warn_type: f"{num_invalid} les lignes ({percentage_invalid :.2f}%) dans {col} ne sont pas comprises dans l'intervalle de dates {min_date} à {max_date}."}
     else:
         message = None
     
@@ -602,7 +602,7 @@ def check_taux_ss(df_raw, col, return_col_corr=False, return_df=False, warn_type
     df.loc[mask_non_percent, col] = pd.to_numeric(df.loc[mask_non_percent, col], errors='coerce')
 
     if percent_count > 0:
-        warnings += f"{percent_count} values ({(percent_count/len(df))*100:.2f})% in {col} have '%' in them."
+        warnings += f"{percent_count} valeurs de  ({(percent_count/len(df))*100 :.2f})% dans {col} contiennent '%'."
 
     df[col] = df[col].astype(float)
     if return_col_corr:
@@ -616,7 +616,7 @@ def check_taux_ss(df_raw, col, return_col_corr=False, return_df=False, warn_type
 
     if len(outside_range_T_SS) > 0:
         
-        warnings += f"""{outside_range_T_SS.shape[0]:,.0f} rows with values outside the range [0, 1] (where {negatives.shape[0]:,.0f} are negatives)"""
+        warnings += f"""{outside_range_T_SS.shape[0] :,.0f} lignes avec des valeurs en dehors de l'intervalle [0, 1] (où {negatives.shape[0] :,.0f} sont des négatives)"""
         
     if warnings != '':
         if return_df:
@@ -637,7 +637,7 @@ def check_fr_base_taux(df_raw, fr_col='FR', base_ss_col='Base_SS', taux_ss_col='
     percentage_invalid = (num_invalid / total_rows) * 100
     
     if num_invalid > 0:
-        return {warn_type: f'{num_invalid} rows ({percentage_invalid:.2f}%) do not meet the condition that when {fr_col} is empty or 0, {base_ss_col} and {taux_ss_col} must be empty or 0.'}
+        return {warn_type: f'{num_invalid} lignes ({percentage_invalid:.2f}%) ne remplissent pas la condition selon laquelle lorsque {fr_col} est vide ou 0, {base_ss_col} et {taux_ss_col} doivent être vides ou 0.'}
     return None
 
 def check_r_ss_equality(df_raw, r_ss_col='R_SS', base_ss_col='Base_SS', taux_ss_col='Taux_SS', tolerance=1, return_df=False, warn_type='warning'):
@@ -654,7 +654,7 @@ def check_r_ss_equality(df_raw, r_ss_col='R_SS', base_ss_col='Base_SS', taux_ss_
         if return_df:
             return df_raw[incorrect_r_ss.index]
         else:
-            return {warn_type: f'{num_incorrect} rows ({percentage_incorrect:.2f}%) where {r_ss_col} != {base_ss_col} * {taux_ss_col} (difference > {tolerance}).'}
+            return {warn_type: f'{num_incorrect} lignes ({percentage_incorrect : .2f}%) où {r_ss_col} != {base_ss_col} * {taux_ss_col} (différence > {tolerance}).'}
     return None
 
 def check_r_ss_without_base_taux(df_raw, r_ss_col='R_SS', base_ss_col='Base_SS', taux_ss_col='Taux_SS', return_df=False, warn_type='warning'):
@@ -676,7 +676,7 @@ def check_r_ss_without_base_taux(df_raw, r_ss_col='R_SS', base_ss_col='Base_SS',
         if return_df:
             return df_raw[outside_range_r_ss.index]
         else:
-            return {warn_type: f'{num_outside_range} rows ({percentage_outside_range:.2f}%) where {r_ss_col} is without {base_ss_col} or {taux_ss_col}.'}
+            return {warn_type: f'{num_outside_range} lignes ({percentage_outside_range:.2f}%) où {r_ss_col} est sans {base_ss_col} ou {taux_ss_col}.'}
     return None
 
 def check_rac_negative(df, col='RàC', warn_type='warning'):
@@ -686,7 +686,7 @@ def check_rac_negative(df, col='RàC', warn_type='warning'):
     percentage_negative = (num_negative / total_rows) * 100
     
     if num_negative > 0:
-        return {warn_type: f'{num_negative} rows ({percentage_negative:.2f}%) in {col} have negative values.'}
+        return {warn_type: f'{num_negative} lignes ({percentage_negative:.2f}%) dans {col} ont des valeurs négatives.'}
     return None
 
 def check_quantite_acte(df, col='quantité_acte', warn_type='warning'):
@@ -698,17 +698,17 @@ def check_quantite_acte(df, col='quantité_acte', warn_type='warning'):
     df_len = len(df)
     
     if len(decimaux) > 0:
-        warnings.append(f'{len(decimaux)} ({(len(decimaux)/df_len)*100:.2f})% rows with decimal (non-integer) values in {col}.')
+        warnings.append(f'{len(decimaux)} ({(len(decimaux)/df_len)*100:.2f})% lignes avec des valeurs décimales (non entières) dans {col}.')
 
     # Vérification des valeurs négatives
     negatives = df[df[col] < 0]
     if len(negatives) > 0:
-        warnings.append(f'{len(negatives)} ({(len(negatives)/df_len)*100:.2f})% rows with negative values in {col}.')
+        warnings.append(f'{len(negatives)} ({(len(negatives)/df_len)*100:.2f})% lignes dont les valeurs sont négatives dans {col}.')
 
     # Vérification des valeurs nulles
     nulles = df[df[col] == 0]
     if len(nulles) > 0:
-        warnings.append(f'{len(nulles)} ({(len(nulles)/df_len)*100:.2f})% rows with null values == 0 in {col}.')
+        warnings.append(f'{len(nulles)} ({(len(nulles)/df_len)*100:.2f})% lignes avec des valeurs nulles (== 0) dans {col}.')
 
     if warnings:
         return {warn_type: ' | '.join(warnings)}
